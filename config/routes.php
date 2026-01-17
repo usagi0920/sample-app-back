@@ -77,6 +77,8 @@ return function (RouteBuilder $routes): void {
          */
 
         $builder->connect('/api/echo-message', ['controller' => 'Api', 'action' => 'echoMessage']);
+        $builder->connect('/api/items', ['controller' => 'Api', 'action' => 'items']);
+        $builder->connect('/api/validate', ['controller' => 'Api', 'action' => 'validate']);
 
         $builder->fallbacks();
     });
