@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use App\Validation\EchoMessageValidator; // 追加
 
 class ApiController extends Controller
 {    
@@ -14,18 +15,21 @@ class ApiController extends Controller
         // クライアントから送られてきた 'message''item' を取得
         $message = $this->request->getData('message');
         $item = $this->request->getData('item');
-
         $data = $this->request->getData();
-        $errors = [];
+        // $errors = [];
 
         // バリデーション
-        if (empty($data['message'])) {
-            $errors['message'] = 'message は必須です';
-        }
+        // if (empty($data['message'])) {
+        //     $errors['message'] = 'message は必須です';
+        // }
 
-        if (empty($data['item'])) {
-            $errors['item'] = 'item は必須です';
-        }
+        // if (empty($data['item'])) {
+        //     $errors['item'] = 'item は必須です';
+        // }
+
+        // Validatorクラスを使ってバリデーションを実行
+        $validator = EchoMessageValidator::getValidator();  // ← 変更: Validatorを取得
+        $errors = $validator->validate($data);             // ← 変更: バリデーションを実行
 
         // エラーがあれば即返す
         if (!empty($errors)) {
@@ -36,8 +40,6 @@ class ApiController extends Controller
                     'errors' => $errors,
                 ], JSON_UNESCAPED_UNICODE));
         }
-
-
 
         // JSONレスポンスを返す（中に文字が入れられてる正常な時）
         return $this->response
@@ -63,37 +65,4 @@ class ApiController extends Controller
             ->withType('application/json')
             ->withStringBody(json_encode(['items' => $items], JSON_UNESCAPED_UNICODE));
     }
-
-//     public function validate()
-// {
-//     $this->request->allowMethod(['post']);
-
-//     $data = $this->request->getData();
-//     $errors = [];
-
-//     if (empty($data['message'])) {
-//         $errors['message'] = 'message は必須です';
-//     }
-
-//     if (empty($data['item'])) {
-//         $errors['item'] = 'item は必須です';
-//     }
-
-//     if (!empty($errors)) {
-//         return $this->response
-//             ->withStatus(422)
-//             ->withType('application/json')
-//             ->withStringBody(json_encode([
-//                 'success' => false,
-//                 'errors' => $errors,
-//             ], JSON_UNESCAPED_UNICODE));
-//     }
-
-//     return $this->response
-//         ->withType('application/json')
-//         ->withStringBody(json_encode([
-//             'success' => true,
-//         ]));
-// }
-
 }
